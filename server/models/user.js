@@ -1,6 +1,6 @@
-var moongose = require('mongoose');
+var mongoose = require('mongoose');
 
-var User = moongose.model('User', {
+var User = mongoose.model('User', {
   email: {
     type: String,
     required: true,
