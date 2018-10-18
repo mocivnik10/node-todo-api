@@ -1,12 +1,13 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb')
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 const todos = [
   {text: 'First text todo'},
-  {text: 'Second text todo'}
+  {text: 'Second text todo', _id: new ObjectID('5bb74bacfa20f9aa5d56130f')}
 ]
 
 beforeEach((done) => {
@@ -67,6 +68,38 @@ describe('GET /todos', () => {
       .expect((res) => {
         expect(res.body.todos.length).toBe(2)
       })
+      .end(done)
+  })
+})
+
+describe('GET /todos/:id', () => {
+  it('should return todo: Second text todo', (done) => {
+    request(app)
+    .get(`/todos/${todos[1]._id}`)
+    .expect(200)
+    .end((err, res) => {
+      if (err) {
+        return done(err)
+      }
+      
+      Todo.findById(res.body.todo._id).then((todo) => {
+        expect(todo.text).toBe('Second text todo')
+        done();
+      }).catch((e) => done(e))
+    })
+  })
+
+  it('should return 404 because invalid object ID', (done) => {
+    request(app)
+    .get(`/todos/${todos[1]._id}f`)
+      .expect(404)
+      .end(done)
+  })
+
+  it('should return 404 because ID not found', (done) => {
+    request(app)
+    .get(`/todos/${todos[0]._id}`)
+      .expect(404)
       .end(done)
   })
 })
