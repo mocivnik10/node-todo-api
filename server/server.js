@@ -1,3 +1,5 @@
+require('./config/config');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb')
@@ -9,9 +11,9 @@ var {User} = require('./models/user');
 const {authenticate} = require('./middleware/authenticate')
 
 var app = express();
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
-
 
 app.post('/todos', (req, res) => {
   var todo = new Todo({
@@ -75,10 +77,6 @@ app.patch('/todos/:id', (req, res) => {
 })
 
 app.post('/users', (req, res) => {
-  // var user = new User({
-  //   email: req.body.email,
-  //   password: req.body.password
-  // })
   var body = _.pick(req.body, ['email', 'password'])
   var user = new User(body);
   
@@ -95,8 +93,8 @@ app.get('/users/me', authenticate, (req,res) => {
   res.send(req.user);
 })
 
-app.listen(3000, () => {
-  console.log('Started on port 3000');
+app.listen(port, () => {
+  console.log(`Started on port ${port}`);
 })
 
 module.exports = {
