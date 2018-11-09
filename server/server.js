@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb')
 const _ = require('lodash')
+const bcrypt = require('bcryptjs');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -11,7 +12,9 @@ var {User} = require('./models/user');
 const {authenticate} = require('./middleware/authenticate')
 
 var app = express();
-const port = process.env.PORT;
+const port = '3000';
+// const port = process.env.PORT;
+// console.log('PORT: ', process.env)
 
 app.use(bodyParser.json());
 
@@ -84,6 +87,18 @@ app.post('/users', (req, res) => {
     return user.generateAuthToken();
   }).then((token) => {
     res.header('x-auth', token).send(user)
+  }).catch((e) => {
+    res.status(400).send(e)
+  })
+})
+
+app.post('/users/login', (req,res) => {
+  let body = _.pick(req.body, ['email', 'password'])
+
+  User.findByCredentials(body.email, body.password).then((user) => {
+    return user.generateAuthToken().then((token) => {
+      res.header('x-auth', token).send(user)
+    })
   }).catch((e) => {
     res.status(400).send(e)
   })
