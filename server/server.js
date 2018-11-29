@@ -145,10 +145,10 @@ app.get('/users/me', authenticate, (req, res) => {
 
 app.put('/users/me/update-password', authenticate, async (req, res) => {
   let id = req.user._id;
-  let body = _.pick(req.body, ['password']);
+  let body = _.pick(req.body, ['password', 'confirmationpass']);
   try {
     let user = await User.findById(id);
-    if (!user) {
+    if (!user || body.password !== body.confirmationpass) {
       return res.status(404).send();
     }
 

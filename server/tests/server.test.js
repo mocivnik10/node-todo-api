@@ -370,3 +370,40 @@ describe('DELETE /users/me/token', () => {
       });
   });
 });
+
+describe('PUT /users/me/update-password', () => {
+  it('should update user password', done => {
+    let newPass = 'newhardpass';
+    let passConf = 'newhardpass';
+    users[0].password = newPass;
+
+    request(app)
+      .put('/users/me/update-password')
+      .set('x-auth', users[0].tokens[0].token)
+      .send({
+        password: newPass,
+        confirmationpass: passConf
+      })
+      .expect(200)
+      .expect(res => {
+        expect(res.headers['x-auth']).toBeTruthy();
+      })
+      .end(done);
+  });
+
+  it('should not update password', done => {
+    let newPass = 'newhardpass';
+    let passConf = 'abc';
+    users[0].password = newPass;
+
+    request(app)
+      .put('/users/me/update-password')
+      .set('x-auth', users[0].tokens[0].token)
+      .send({
+        password: newPass,
+        confirmationpass: passConf
+      })
+      .expect(404)
+      .end(done);
+  });
+});
