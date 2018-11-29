@@ -143,6 +143,24 @@ app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
 });
 
+app.put('/users/me/update-password', authenticate, async (req, res) => {
+  let id = req.user._id;
+  let body = _.pick(req.body, ['password']);
+  try {
+    let user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    user.password = body.password;
+    await user.save();
+    let token = await user.generateAuthToken();
+    res.header('x-auth', token).send({ user });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });

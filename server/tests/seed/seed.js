@@ -52,14 +52,10 @@ const populateTodos = async () => {
 };
 
 const populateUsers = async () => {
-  try {
-    await User.remove({});
-    let userOne = new User(users[0]).save();
-    let userTwo = new User(users[1]).save();
-    return Promise.all([userOne, userTwo]);
-  } catch (e) {
-    throw new Error(e);
-  }
+  await User.remove({});
+  let userOne = new User(users[0]).save();
+  let userTwo = new User(users[1]).save();
+  return Promise.all([userOne, userTwo]);
 };
 
 module.exports = { todos, populateTodos, users, populateUsers };
