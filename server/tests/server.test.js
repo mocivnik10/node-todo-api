@@ -5,10 +5,19 @@ const { ObjectID } = require('mongodb');
 const { app } = require('./../server');
 const { Todo } = require('./../models/todo');
 const { User } = require('./../models/user');
-const { todos, populateTodos, users, populateUsers } = require('./seed/seed');
+const { UserRating } = require('./../models/rating');
+const {
+  todos,
+  populateTodos,
+  users,
+  populateUsers,
+  userRatings,
+  populateRatings
+} = require('./seed/seed');
 
 beforeEach(populateUsers);
 beforeEach(populateTodos);
+beforeEach(populateRatings);
 
 describe('POST /todos', () => {
   it('should create a new todo', done => {
@@ -371,7 +380,7 @@ describe('DELETE /users/me/token', () => {
   });
 });
 
-describe('PUT /users/me/update-password', () => {
+describe('PATCH /users/me/update-password', () => {
   it('should update user password', done => {
     let newPass = 'newhardpass';
     let passConf = 'newhardpass';
@@ -428,6 +437,37 @@ describe('GET /users/:id', () => {
   it('should return 404 for non-object ids', done => {
     request(app)
       .get('/users/123abc')
+      .expect(404)
+      .end(done);
+  });
+});
+
+describe('POST /users/:id/like', () => {
+  it('should create new rating', done => {
+    request(app)
+      .post(`/users/${users[0]._id.toHexString()}/like`)
+      .set('x-auth', users[1].tokens[0].token)
+      .send({
+        _user: users[1]._id
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  it('should return 400 for existing rating', done => {
+    request(app)
+      .post(`/users/${users[1]._id.toHexString()}/like`)
+      .set('x-auth', users[0].tokens[0].token)
+      .send({
+        _user: users[0]._id
+      })
+      .expect(400)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', done => {
+    request(app)
+      .post(`/users/abc123/like`)
       .expect(404)
       .end(done);
   });

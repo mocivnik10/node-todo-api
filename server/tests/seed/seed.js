@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const { Todo } = require('./../../models/todo');
 const { User } = require('./../../models/user');
+const { UserRating } = require('./../../models/rating');
 
 const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
@@ -46,6 +47,14 @@ const todos = [
   }
 ];
 
+const userRatings = [
+  {
+    _id: new ObjectID(),
+    _user: userOneId,
+    _liked_user: userTwoId
+  }
+];
+
 const populateTodos = async () => {
   await Todo.remove();
   await Todo.insertMany(todos);
@@ -58,4 +67,17 @@ const populateUsers = async () => {
   return Promise.all([userOne, userTwo]);
 };
 
-module.exports = { todos, populateTodos, users, populateUsers };
+const populateRatings = async () => {
+  await UserRating.remove({});
+  let rating = new UserRating(userRatings[0]).save();
+  return Promise.all([rating]);
+};
+
+module.exports = {
+  todos,
+  populateTodos,
+  users,
+  populateUsers,
+  userRatings,
+  populateRatings
+};
