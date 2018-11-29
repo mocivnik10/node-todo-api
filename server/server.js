@@ -180,14 +180,24 @@ app.put('/users/me/update-password', authenticate, async (req, res) => {
 });
 
 app.post('/users/:id/like', authenticate, async (req, res) => {
-  let user_id = req.user._id;
-  let liked_user_id = req.params.id;
-  let rating = new UserRating({
-    _user: user_id,
-    _liked_user: liked_user_id
-  });
-
   try {
+    let user_id = req.user._id;
+    let liked_user_id = req.params.id;
+    let like = await UserRating.findOne({
+      _user: user_id,
+      _liked_user: liked_user_id
+    });
+    if (like) {
+      return res.status(400).send();
+    } else if (!ObjectID.isValid(liked_user_id)) {
+      return res.status(404).send();
+    }
+
+    let rating = new UserRating({
+      _user: user_id,
+      _liked_user: liked_user_id
+    });
+
     let doc = await rating.save();
     res.send(doc);
   } catch (e) {
