@@ -161,7 +161,7 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
-app.put('/users/me/update-password', authenticate, async (req, res) => {
+app.patch('/users/me/update-password', authenticate, async (req, res) => {
   let id = req.user._id;
   let body = _.pick(req.body, ['password', 'confirmationpass']);
   try {
@@ -172,8 +172,7 @@ app.put('/users/me/update-password', authenticate, async (req, res) => {
 
     user.password = body.password;
     await user.save();
-    let token = await user.generateAuthToken();
-    res.header('x-auth', token).send({ user });
+    res.send({ user });
   } catch (e) {
     res.status(400).send(e);
   }

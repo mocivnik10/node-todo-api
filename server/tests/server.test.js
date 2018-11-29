@@ -378,16 +378,13 @@ describe('PUT /users/me/update-password', () => {
     users[0].password = newPass;
 
     request(app)
-      .put('/users/me/update-password')
+      .patch('/users/me/update-password')
       .set('x-auth', users[0].tokens[0].token)
       .send({
         password: newPass,
         confirmationpass: passConf
       })
       .expect(200)
-      .expect(res => {
-        expect(res.headers['x-auth']).toBeTruthy();
-      })
       .end(done);
   });
 
