@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
+const { UserRating } = require('./models/rating');
 const { authenticate } = require('./middleware/authenticate');
 
 const app = express();
@@ -173,6 +174,22 @@ app.put('/users/me/update-password', authenticate, async (req, res) => {
     await user.save();
     let token = await user.generateAuthToken();
     res.header('x-auth', token).send({ user });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+app.post('/users/:id/like', authenticate, async (req, res) => {
+  let user_id = req.user._id;
+  let liked_user_id = req.params.id;
+  let rating = new UserRating({
+    _user: user_id,
+    _liked_user: liked_user_id
+  });
+
+  try {
+    let doc = await rating.save();
+    res.send(doc);
   } catch (e) {
     res.status(400).send(e);
   }
