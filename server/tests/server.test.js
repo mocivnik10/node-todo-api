@@ -472,3 +472,21 @@ describe('POST /users/:id/like', () => {
       .end(done);
   });
 });
+
+describe('DELETE /users/:id/unlike', () => {
+  it('should remove the rating', done => {
+    request(app)
+      .delete(`/users/${users[1]._id.toHexString()}/unlike`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .end(done);
+  });
+
+  it('should return 404 if rating not found', done => {
+    request(app)
+      .delete(`/users/${users[0]._id.toHexString()}/unlike`)
+      .set('x-auth', users[1].tokens[0].token)
+      .expect(404)
+      .end(done);
+  });
+});

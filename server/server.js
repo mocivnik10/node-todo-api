@@ -204,6 +204,23 @@ app.post('/users/:id/like', authenticate, async (req, res) => {
   }
 });
 
+app.delete('/users/:id/unlike', authenticate, async (req, res) => {
+  try {
+    let user_id = req.user._id;
+    let liked_user_id = req.params.id;
+    let like = await UserRating.findOneAndRemove({
+      _user: user_id,
+      _liked_user: liked_user_id
+    });
+    if (!like) {
+      res.status(404).send();
+    }
+    res.send({ like });
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
