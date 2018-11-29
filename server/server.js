@@ -143,6 +143,23 @@ app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
 });
 
+app.get('/users/:id', async (req, res) => {
+  let id = req.params.id;
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  try {
+    let user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send({ user });
+  } catch (e) {
+    return res.status(400).send(e);
+  }
+});
+
 app.put('/users/me/update-password', authenticate, async (req, res) => {
   let id = req.user._id;
   let body = _.pick(req.body, ['password', 'confirmationpass']);

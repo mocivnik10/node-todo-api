@@ -407,3 +407,31 @@ describe('PUT /users/me/update-password', () => {
       .end(done);
   });
 });
+
+describe('GET /users/:id', () => {
+  it('should return user', done => {
+    request(app)
+      .get(`/users/${users[0]._id.toHexString()}`)
+      .expect(200)
+      .expect(res => {
+        expect(res.body.email).toBe(todos[0].email);
+      })
+      .end(done);
+  });
+
+  it('should return 404 if user not found', done => {
+    let hexId = new ObjectID().toHexString();
+
+    request(app)
+      .get(`/users/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', done => {
+    request(app)
+      .get('/users/123abc')
+      .expect(404)
+      .end(done);
+  });
+});
