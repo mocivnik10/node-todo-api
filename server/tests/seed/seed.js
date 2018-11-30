@@ -17,7 +17,8 @@ const users = [
         access: 'auth',
         token: jwt.sign({ _id: userOneId, access: 'auth' }, 'abc123').toString()
       }
-    ]
+    ],
+    ratingCount: 0
   },
   {
     _id: userTwoId,
@@ -28,7 +29,8 @@ const users = [
         access: 'auth',
         token: jwt.sign({ _id: userTwoId, access: 'auth' }, 'abc123').toString()
       }
-    ]
+    ],
+    ratingCount: 1
   }
 ];
 

@@ -32,7 +32,11 @@ const UserSchema = new mongoose.Schema({
         require: true
       }
     }
-  ]
+  ],
+  ratingCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 UserSchema.methods.toJSON = function() {

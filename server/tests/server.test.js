@@ -490,3 +490,15 @@ describe('DELETE /users/:id/unlike', () => {
       .end(done);
   });
 });
+
+describe('GET /most-liked', () => {
+  it('should list​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked', done => {
+    request(app)
+      .get('/most-liked')
+      .expect(200)
+      .expect(res => {
+        expect(res.body.users.length).toBe(1);
+      })
+      .end(done);
+  });
+});
