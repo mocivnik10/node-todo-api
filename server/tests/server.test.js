@@ -24,7 +24,7 @@ describe('POST /todos', () => {
     let text = 'Test todo text';
 
     request(app)
-      .post('/todos')
+      .post('/api/v1/todos')
       .set('x-auth', users[0].tokens[0].token)
       .send({ text })
       .expect(200)
@@ -49,7 +49,7 @@ describe('POST /todos', () => {
 
   it('should not create todo with invalid body data', done => {
     request(app)
-      .post('/todos')
+      .post('/api/v1/todos')
       .set('x-auth', users[0].tokens[0].token)
       .send({})
       .expect(400)
@@ -72,7 +72,7 @@ describe('POST /todos', () => {
 describe('GET /todos', () => {
   it('should list all todos', done => {
     request(app)
-      .get('/todos')
+      .get('/api/v1/todos')
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
@@ -85,7 +85,7 @@ describe('GET /todos', () => {
 describe('GET /todos/:id', () => {
   it('should return todo', done => {
     request(app)
-      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .get(`/api/v1/todos/${todos[0]._id.toHexString()}`)
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
@@ -96,7 +96,7 @@ describe('GET /todos/:id', () => {
 
   it('should not return todo created by other user', done => {
     request(app)
-      .get(`/todos/${todos[1]._id.toHexString()}`)
+      .get(`/api/v1/todos/${todos[1]._id.toHexString()}`)
       .set('x-auth', users[0].tokens[0].token)
       .expect(404)
       .end(done);
@@ -106,7 +106,7 @@ describe('GET /todos/:id', () => {
     let hexId = new ObjectID().toHexString();
 
     request(app)
-      .get(`/todos/${hexId}`)
+      .get(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[0].tokens[0].token)
       .expect(404)
       .end(done);
@@ -114,7 +114,7 @@ describe('GET /todos/:id', () => {
 
   it('should return 404 for non-object ids', done => {
     request(app)
-      .get('/todos/123abc')
+      .get('/api/v1/todos/123abc')
       .set('x-auth', users[0].tokens[0].token)
       .expect(404)
       .end(done);
@@ -126,7 +126,7 @@ describe('DELETE /todos/:id', () => {
     let hexId = todos[1]._id.toHexString();
 
     request(app)
-      .delete(`/todos/${hexId}`)
+      .delete(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[1].tokens[0].token)
       .expect(200)
       .expect(res => {
@@ -151,7 +151,7 @@ describe('DELETE /todos/:id', () => {
     let hexId = new ObjectID().toHexString();
 
     request(app)
-      .delete(`/todos/${hexId}`)
+      .delete(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[1].tokens[0].token)
       .expect(404)
       .end(done);
@@ -159,7 +159,7 @@ describe('DELETE /todos/:id', () => {
 
   it('should return 404 if object id is invalid', done => {
     request(app)
-      .delete('/todos/123abc')
+      .delete('/api/v1/todos/123abc')
       .set('x-auth', users[1].tokens[0].token)
       .expect(404)
       .end(done);
@@ -172,7 +172,7 @@ describe('PATCH /todos/:id', () => {
     let text = 'This should be the new text';
 
     request(app)
-      .patch(`/todos/${hexId}`)
+      .patch(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[0].tokens[0].token)
       .send({
         completed: true,
@@ -193,7 +193,7 @@ describe('PATCH /todos/:id', () => {
     let text = 'This should be the new text';
 
     request(app)
-      .patch(`/todos/${hexId}`)
+      .patch(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[1].tokens[0].token)
       .send({
         completed: true,
@@ -208,7 +208,7 @@ describe('PATCH /todos/:id', () => {
     let text = 'This should be the new text!!';
 
     request(app)
-      .patch(`/todos/${hexId}`)
+      .patch(`/api/v1/todos/${hexId}`)
       .set('x-auth', users[1].tokens[0].token)
       .send({
         completed: false,
@@ -227,7 +227,7 @@ describe('PATCH /todos/:id', () => {
 describe('GET /users/me', () => {
   it('should return user if authenticated', done => {
     request(app)
-      .get('/users/me')
+      .get('/api/v1/users/me')
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
@@ -239,7 +239,7 @@ describe('GET /users/me', () => {
 
   it('should return 404 if not authenticated', done => {
     request(app)
-      .get('/users/me')
+      .get('/api/v1/users/me')
       .expect(404)
       .expect(res => {
         expect(res.body).toEqual({});
@@ -254,7 +254,7 @@ describe('POST /users', () => {
     let password = '123abc!';
 
     request(app)
-      .post('/users')
+      .post('/api/v1/users')
       .send({ email, password })
       .expect(200)
       .expect(res => {
@@ -283,7 +283,7 @@ describe('POST /users', () => {
     let password = 'abc';
 
     request(app)
-      .post('/users')
+      .post('/api/v1/users')
       .send({ email, password })
       .expect(400)
       .end(done);
@@ -294,7 +294,7 @@ describe('POST /users', () => {
     let password = '123abc!';
 
     request(app)
-      .post('/users')
+      .post('/api/v1/users')
       .send({ email, password })
       .expect(400)
       .end(done);
@@ -307,7 +307,7 @@ describe('POST /users/login', () => {
     let password = users[1].password;
 
     request(app)
-      .post('/users/login')
+      .post('/api/v1/users/login')
       .send({ email, password })
       .expect(200)
       .expect(res => {
@@ -336,7 +336,7 @@ describe('POST /users/login', () => {
     let password = users[1].password + '123';
 
     request(app)
-      .post('/users/login')
+      .post('/api/v1/users/login')
       .send({ email, password })
       .expect(400)
       .expect(res => {
@@ -361,7 +361,7 @@ describe('POST /users/login', () => {
 describe('DELETE /users/me/token', () => {
   it('should remove auth token on logout', done => {
     request(app)
-      .delete('/users/me/token')
+      .delete('/api/v1/users/me/token')
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .end(async (err, res) => {
@@ -387,7 +387,7 @@ describe('PATCH /users/me/update-password', () => {
     users[0].password = newPass;
 
     request(app)
-      .patch('/users/me/update-password')
+      .patch('/api/v1/users/me/update-password')
       .set('x-auth', users[0].tokens[0].token)
       .send({
         password: newPass,
@@ -403,7 +403,7 @@ describe('PATCH /users/me/update-password', () => {
     users[0].password = newPass;
 
     request(app)
-      .put('/users/me/update-password')
+      .put('/api/v1/users/me/update-password')
       .set('x-auth', users[0].tokens[0].token)
       .send({
         password: newPass,
@@ -417,7 +417,7 @@ describe('PATCH /users/me/update-password', () => {
 describe('GET /users/:id', () => {
   it('should return user', done => {
     request(app)
-      .get(`/users/${users[0]._id.toHexString()}`)
+      .get(`/api/v1/users/${users[0]._id.toHexString()}`)
       .expect(200)
       .expect(res => {
         expect(res.body.email).toBe(todos[0].email);
@@ -436,7 +436,7 @@ describe('GET /users/:id', () => {
 
   it('should return 404 for non-object ids', done => {
     request(app)
-      .get('/users/123abc')
+      .get('/api/v1/users/123abc')
       .expect(404)
       .end(done);
   });
@@ -445,7 +445,7 @@ describe('GET /users/:id', () => {
 describe('POST /users/:id/like', () => {
   it('should create new rating', done => {
     request(app)
-      .post(`/users/${users[0]._id.toHexString()}/like`)
+      .post(`/api/v1/users/${users[0]._id.toHexString()}/like`)
       .set('x-auth', users[1].tokens[0].token)
       .send({
         _user: users[1]._id
@@ -456,7 +456,7 @@ describe('POST /users/:id/like', () => {
 
   it('should return 400 for existing rating', done => {
     request(app)
-      .post(`/users/${users[1]._id.toHexString()}/like`)
+      .post(`/api/v1/users/${users[1]._id.toHexString()}/like`)
       .set('x-auth', users[0].tokens[0].token)
       .send({
         _user: users[0]._id
@@ -467,7 +467,7 @@ describe('POST /users/:id/like', () => {
 
   it('should return 404 for non-object ids', done => {
     request(app)
-      .post(`/users/abc123/like`)
+      .post(`/api/v1/users/abc123/like`)
       .expect(404)
       .end(done);
   });
@@ -476,7 +476,7 @@ describe('POST /users/:id/like', () => {
 describe('DELETE /users/:id/unlike', () => {
   it('should remove the rating', done => {
     request(app)
-      .delete(`/users/${users[1]._id.toHexString()}/unlike`)
+      .delete(`/api/v1/users/${users[1]._id.toHexString()}/unlike`)
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .end(done);
@@ -484,7 +484,7 @@ describe('DELETE /users/:id/unlike', () => {
 
   it('should return 404 if rating not found', done => {
     request(app)
-      .delete(`/users/${users[0]._id.toHexString()}/unlike`)
+      .delete(`/api/v1/users/${users[0]._id.toHexString()}/unlike`)
       .set('x-auth', users[1].tokens[0].token)
       .expect(404)
       .end(done);
@@ -494,7 +494,7 @@ describe('DELETE /users/:id/unlike', () => {
 describe('GET /most-liked', () => {
   it('should list​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked', done => {
     request(app)
-      .get('/most-liked')
+      .get('/api/v1/most-liked')
       .expect(200)
       .expect(res => {
         expect(res.body.users.length).toBe(1);
